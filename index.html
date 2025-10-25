@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VocabLab - Học từ vựng tiếng Anh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            VocabLab
+        </div>
+        <div class="header-actions">
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-moon" id="theme-icon"></i>
+            </button>
+            <button class="menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a class="nav-link active" onclick="showSection('dashboard', this)">
+                    <i class="fas fa-chart-bar"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="showSection('words', this)">
+                    <i class="fas fa-book"></i>
+                    My Words
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="showSection('flashcards', this)">
+                    <i class="fas fa-clone"></i>
+                    Flashcards
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="showSection('listen', this)">
+                    <i class="fas fa-headphones"></i>
+                    Listen & Repeat
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="showSection('quiz', this)">
+                    <i class="fas fa-question-circle"></i>
+                    Quiz
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="showSection('settings', this)">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <section id="dashboard" class="section active">
+            <div class="card-header">
+                <h1 class="card-title">Dashboard</h1>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number" id="total-words">0</span>
+                    <div class="stat-label">Total Words</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="learned-words">0</span>
+                    <div class="stat-label">Learned Words</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="review-today">0</span>
+                    <div class="stat-label">Words to Review</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="quiz-score">0%</span>
+                    <div class="stat-label">Quiz Average</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Quick Actions</h2>
+                </div>
+                <div class="flex gap-2">
+                    <button class="btn btn-primary" onclick="showSection('words')">
+                        <i class="fas fa-plus"></i> Add New Word
+                    </button>
+                    <button class="btn btn-secondary" onclick="showSection('flashcards')">
+                        <i class="fas fa-clone"></i> Start Flashcards
+                    </button>
+                    <button class="btn btn-secondary" onclick="showSection('quiz')">
+                        <i class="fas fa-question-circle"></i> Take a Quiz
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="words" class="section">
+            <div class="card-header flex justify-between items-center mb-2">
+                <h1 class="card-title">My Words</h1>
+                <button class="btn btn-primary" onclick="showModal('add-word-modal')">
+                    <i class="fas fa-plus"></i> Add New Word
+                </button>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-input" id="search-input" onkeyup="filterWords()" placeholder="Search words, meanings, or tags...">
+            </div>
+            <div class="word-list" id="word-list">
+                </div>
+        </section>
+
+        <section id="flashcards" class="section">
+            <h1 class="card-title text-center mb-2">Flashcards</h1>
+            <div class="flashcard-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="flashcard-progress"></div>
+                </div>
+                <div class="flashcard" id="flashcard" onclick="flipCard()">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <h2 class="flashcard-word" id="flashcard-word">Word</h2>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3 class_name="flashcard-word" id="flashcard-meaning">Meaning</h3>
+                            <p class="flashcard-example" id="flashcard-example">Example</p>
+                            <button class="btn btn-sm btn-secondary mt-2" onclick="playAudio(event)">
+                                <i class="fas fa-volume-up"></i> Play Audio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flashcard-controls">
+                    <button class="btn btn-danger" onclick="handleFlashcardResponse('again')">
+                        <i class="fas fa-times"></i> Again
+                    </button>
+                    <button class="btn btn-success" onclick="handleFlashcardResponse('good')">
+                        <i class="fas fa-check"></i> Good
+                    </button>
+                    <button class="btn btn-primary" onclick="handleFlashcardResponse('easy')">
+                        <i class="fas fa-check-double"></i> Easy
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="listen" class="section">
+            <h1 class="card-title text-center mb-2">Listen & Repeat</h1>
+            <div class="card text-center" style="max-width: 600px; margin: 0 auto;">
+                <h2 class="flashcard-word" id="listen-word">Word</h2>
+                <p class="text-muted" id="listen-pos">Part of Speech</p>
+                <h3 class="mb-2" id="listen-meaning">Meaning</h3>
+                <p class_name="flashcard-example" id="listen-example">Example text here</p>
+                <div class="flex gap-2" style="justify-content: center; margin-top: 2rem;">
+                    <button class="btn btn-primary" onclick="playListenAudio()">
+                        <i class="fas fa-volume-up"></i> Play Audio
+                    </button>
+                    <button class="btn btn-secondary" onclick="nextListenWord()">
+                        <i class="fas fa-arrow-right"></i> Next
+                    </button>
+                    <button class="btn btn-secondary" onclick="shuffleListenWords()">
+                        <i class="fas fa-random"></i> Shuffle
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="quiz" class="section">
+            <div class="quiz-container">
+                <div id="quiz-start-screen">
+                    <h1 class="card-title text-center mb-2">Start Quiz</h1>
+                    <div class="card">
+                        <div class="form-group">
+                            <label class="form-label">Number of Questions</label>
+                            <input type="number" class="form-input" id="quiz-num-questions" value="10" min="5" max="50">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Quiz Type</label>
+                            <select class="form-input" id="quiz-type">
+                                <option value="multiple-choice">Multiple Choice</option>
+                                <option value="fill-in-blank">Fill in the Blank</option>
+                                <option value="mixed">Mixed</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;" onclick="startQuiz()">Start Quiz</button>
+                    </div>
+                </div>
+                <div id="quiz-main-screen" class="hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <span id="quiz-question-number">Question 1/10</span>
+                        <button class="btn btn-sm btn-danger" onclick="endQuiz(true)">End Quiz</button>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="quiz-progress"></div>
+                    </div>
+                    <div class="quiz-question" id="quiz-question-container">
+                        </div>
+                    <button class="btn btn-primary" id="quiz-next-btn" onclick="nextQuizQuestion()">Next</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="settings" class="section">
+            <h1 class="card-title mb-2">Settings</h1>
+            <div class="card">
+                <h2 class="card-title">Data Management</h2>
+                <div class="flex gap-2 mt-2">
+                    <button class="btn btn-secondary" onclick="importData()">
+                        <i class="fas fa-upload"></i> Import Data
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportData()">
+                        <i class="fas fa-download"></i> Export Data
+                    </button>
+                    <button class="btn btn-danger" onclick="resetData()">
+                        <i class="fas fa-trash-alt"></i> Reset All Data
+                    </button>
+                </div>
+                <input type="file" id="import-file-input" accept=".json" class="hidden" onchange="handleImportFile(event)">
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="add-word-modal">
+        <div class="modal-content">
+            <div class="card-header">
+                <h2 class="card-title">Add New Word</h2>
+                <button class="btn btn-secondary btn-sm" onclick="closeModal('add-word-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form onsubmit="saveWord(event)">
+                <div class="form-group">
+                    <label class="form-label">Word *</label>
+                    <div class="input-with-button">
+                        <input type="text" class="form-input" id="word-input" required>
+                        <button type="button" class="btn btn-primary btn-sm" id="lookup-api-btn" onclick="fetchWordFromAPI()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Part of Speech *</label>
+                    <select class="form-input" id="pos-input" required>
+                        <option value="noun">Noun</option>
+                        <option value="verb">Verb</option>
+                        <option value="adjective">Adjective</option>
+                        <option value="adverb">Adverb</option>
+                        <option value="preposition">Preposition</option>
+                        <option value="conjunction">Conjunction</option>
+                        <option value="interjection">Interjection</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Meaning *</label>
+                    <input type="text" class="form-input" id="meaning-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pronunciation</label>
+                    <input type="text" class="form-input" id="pronunciation-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Example</label>
+                    <input type="text" class="form-input" id="example-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Audio URL</label>
+                    <input type="url" class="form-input" id="audio-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tags (comma separated)</label>
+                    <input type="text" class="form-input" id="tags-input" placeholder="e.g. common, business, travel">
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Save Word
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('add-word-modal')">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="edit-word-modal">
+        <div class="modal-content">
+            <div class="card-header">
+                <h2 class="card-title">Edit Word</h2>
+                <button class="btn btn-secondary btn-sm" onclick="closeModal('edit-word-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form onsubmit="updateWord(event)">
+                <input type="hidden" id="edit-word-id">
+                <div class="form-group">
+                    <label class="form-label">Word *</label>
+                    <input type="text" class="form-input" id="edit-word-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Part of Speech *</label>
+                    <select class="form-input" id="edit-pos-input" required>
+                        <option value="noun">Noun</option>
+                        <option value="verb">Verb</option>
+                        <option value="adjective">Adjective</option>
+                        <option value="adverb">Adverb</option>
+                        <option value="preposition">Preposition</option>
+                        <option value="conjunction">Conjunction</option>
+                        <option value="interjection">Interjection</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Meaning *</label>
+                    <input type="text" class="form-input" id="edit-meaning-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pronunciation</label>
+                    <input type="text" class="form-input" id="edit-pronunciation-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Example</label>
+                    <input type="text" class="form-input" id="edit-example-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Audio URL</label>
+                    <input type="url" class="form-input" id="edit-audio-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tags (comma separated)</label>
+                    <input type="text" class="form-input" id="edit-tags-input">
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Update Word
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('edit-word-modal')">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="quiz-results-modal">
+        <div class="modal-content">
+            <div class="card-header">
+                <h2 class="card-title">Quiz Results</h2>
+                <button class="btn btn-secondary btn-sm" onclick="closeModal('quiz-results-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="quiz-results-summary">
+                </div>
+            <div class="quiz-results-list" id="quiz-results-body">
+                </div>
+            <button class="btn btn-primary mt-2" onclick="closeModal('quiz-results-modal')">Close</button>
+        </div>
+    </div>
+    
+    <div id="notification" class="notification"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
